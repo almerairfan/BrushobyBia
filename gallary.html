@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gallery — Brusho by Bia</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blush:   #F2C4C4;
+      --petal:   #F7DDD8;
+      --cream:   #FBF5F0;
+      --sand:    #E8D5C4;
+      --mauve:   #C4909A;
+      --deep:    #A06070;
+      --ink:     #2A1A1E;
+      --muted:   #9A7A7F;
+      --white:   #FFFFFF;
+      --wa:      #25D366;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--ink); overflow-x: hidden; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 3rem;
+      background: rgba(251,245,240,0.88);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(196,144,154,0.18);
+    }
+    .nav-brand { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; }
+    .nav-logo-img { height: 44px; width: 44px; border-radius: 10px; object-fit: cover; }
+    .nav-wordmark { font-family: 'Playfair Display', serif; font-size: 1.35rem; font-weight: 400; letter-spacing: 0.03em; color: var(--ink); }
+    .nav-wordmark span { color: var(--mauve); font-style: italic; }
+    .nav-links { display: flex; gap: 2rem; list-style: none; align-items: center; }
+    .nav-links a { font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--mauve); }
+    .nav-wa {
+      display: flex; align-items: center; gap: 0.4rem;
+      background: var(--wa); color: #fff;
+      padding: 0.5rem 1rem; border-radius: 40px;
+      font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase;
+      text-decoration: none; font-weight: 500;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .nav-wa:hover { opacity: 0.88; transform: translateY(-1px); }
+
+    /* ── PAGE HEADER ── */
+    .page-header {
+      padding: 9rem 3rem 2.5rem; text-align: center; position: relative; overflow: hidden;
+    }
+    .blob { position: absolute; border-radius: 50%; pointer-events: none; filter: blur(60px); }
+    .blob-1 { width: 450px; height: 450px; top: -180px; right: -100px; background: var(--blush); opacity: 0.4; }
+    .blob-2 { width: 320px; height: 320px; top: -100px; left: -80px; background: var(--sand); opacity: 0.4; }
+    .eyebrow { font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--mauve); margin-bottom: 0.7rem; position: relative; z-index: 1; }
+    .page-header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 5vw, 4rem); font-weight: 700;
+      line-height: 1.1; margin-bottom: 1rem; position: relative; z-index: 1;
+    }
+    .page-header h1 em { font-style: italic; color: var(--mauve); }
+    .page-header p {
+      font-size: 0.95rem; color: var(--muted); font-weight: 300;
+      max-width: 480px; margin: 0 auto; line-height: 1.8; position: relative; z-index: 1;
+    }
+
+    /* ── CATEGORY TABS ── */
+    .cat-tabs {
+      display: flex; gap: 0.8rem; justify-content: center;
+      padding: 2.5rem 3rem 1.5rem; position: relative; z-index: 1;
+    }
+    .cat-tab {
+      padding: 0.8rem 2.2rem; border-radius: 50px;
+      border: 1.5px solid rgba(196,144,154,0.3); background: var(--white);
+      font-size: 0.85rem; letter-spacing: 0.04em; color: var(--muted);
+      cursor: pointer; transition: all 0.25s; font-family: 'DM Sans', sans-serif;
+      font-weight: 500; display: flex; align-items: center; gap: 0.5rem;
+    }
+    .cat-tab:hover { border-color: var(--mauve); color: var(--mauve); transform: translateY(-2px); }
+    .cat-tab.active { background: var(--mauve); border-color: var(--mauve); color: var(--white); box-shadow: 0 8px 20px rgba(196,144,154,0.35); }
+
+    /* ── SUB FILTERS (within category) ── */
+    .filters {
+      display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap;
+      padding: 0 3rem 3rem; position: relative; z-index: 1;
+    }
+    .filter-btn {
+      padding: 0.5rem 1.2rem; border-radius: 40px;
+      border: 1px solid rgba(196,144,154,0.25); background: transparent;
+      font-size: 0.74rem; letter-spacing: 0.04em; color: var(--muted);
+      cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif;
+    }
+    .filter-btn:hover { border-color: var(--mauve); color: var(--mauve); }
+    .filter-btn.active { background: var(--petal); border-color: var(--blush); color: var(--deep); }
+
+    /* ── GALLERY GRID ── */
+    .gallery-wrap { padding: 0 3rem 6rem; max-width: 1300px; margin: 0 auto; }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.1rem;
+    }
+    .g-item {
+      border-radius: 16px; overflow: hidden; cursor: pointer;
+      position: relative; background: var(--petal);
+      transition: transform 0.3s, box-shadow 0.3s;
+      aspect-ratio: 4/5;
+    }
+    .g-item:hover { transform: translateY(-5px); box-shadow: 0 16px 36px rgba(58,27,30,0.16); }
+    .g-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    .g-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(42,26,30,0.82) 0%, rgba(42,26,30,0.15) 45%, transparent 65%);
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 1rem;
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .g-item:hover .g-overlay { opacity: 1; }
+    .g-overlay h4 { font-family: 'Playfair Display', serif; color: var(--white); font-size: 1rem; font-weight: 400; margin-bottom: 0.15rem; }
+    .g-overlay p { font-size: 0.72rem; color: rgba(255,255,255,0.8); }
+    .g-tag {
+      position: absolute; top: 0.7rem; left: 0.7rem;
+      background: rgba(255,255,255,0.9); color: var(--mauve);
+      font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 0.25rem 0.6rem; border-radius: 20px; z-index: 2; font-weight: 500;
+    }
+    .g-sold {
+      position: absolute; top: 0.7rem; right: 0.7rem;
+      background: var(--ink); color: var(--white);
+      font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 0.25rem 0.6rem; border-radius: 20px; z-index: 2;
+    }
+
+    .fade-in { animation: fadeUp 0.5s ease both; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ── CTA STRIP ── */
+    .cta-strip {
+      margin: 0 3rem 6rem; padding: 3.5rem 3rem; border-radius: 28px;
+      background: linear-gradient(135deg, var(--petal), var(--blush));
+      text-align: center; position: relative; overflow: hidden;
+      max-width: 1300px; margin-left: auto; margin-right: auto;
+    }
+    .cta-strip h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.6rem, 3vw, 2.6rem); font-weight: 700;
+      margin-bottom: 0.8rem; position: relative; z-index: 1;
+    }
+    .cta-strip h2 em { font-style: italic; color: var(--deep); }
+    .cta-strip p { font-size: 0.92rem; color: var(--ink); opacity: 0.7; margin-bottom: 1.8rem; position: relative; z-index: 1; }
+    .cta-btns { display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap; position: relative; z-index: 1; }
+    .btn-pill {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.85rem 2rem; border-radius: 50px;
+      font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase;
+      font-weight: 500; text-decoration: none; border: none; cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+    }
+    .btn-pill:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(196,144,154,0.3); }
+    .btn-fill { background: var(--mauve); color: var(--white); }
+    .btn-fill:hover { background: var(--deep); }
+    .btn-outline { background: var(--white); border: 1.5px solid var(--mauve); color: var(--mauve); }
+    .btn-outline:hover { background: var(--petal); }
+
+    /* ── FLOATING WHATSAPP ── */
+    .wa-float {
+      position: fixed; bottom: 1.8rem; right: 1.8rem; z-index: 999;
+      width: 58px; height: 58px; border-radius: 50%;
+      background: var(--wa);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 6px 24px rgba(37,211,102,0.4);
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+      animation: wa-pulse 2.5s ease-in-out infinite;
+    }
+    .wa-float:hover { transform: scale(1.1); box-shadow: 0 10px 32px rgba(37,211,102,0.5); }
+    @keyframes wa-pulse {
+      0%, 100% { box-shadow: 0 6px 24px rgba(37,211,102,0.4), 0 0 0 0 rgba(37,211,102,0.3); }
+      50% { box-shadow: 0 6px 24px rgba(37,211,102,0.4), 0 0 0 10px rgba(37,211,102,0); }
+    }
+    .wa-float svg { width: 30px; height: 30px; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--ink); color: rgba(255,255,255,0.55);
+      padding: 2.8rem 3rem;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 1.5rem;
+    }
+    .footer-logo { font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--white); font-weight: 400; }
+    .footer-logo span { color: var(--blush); font-style: italic; }
+    .footer-links { display: flex; gap: 1.8rem; }
+    .footer-links a { font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.45); text-decoration: none; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--blush); }
+    .footer-copy { font-size: 0.75rem; }
+
+    /* ── LIGHTBOX ── */
+    .lightbox {
+      position: fixed; inset: 0; z-index: 1000;
+      background: rgba(42,26,30,0.92);
+      display: none; align-items: center; justify-content: center;
+      padding: 2rem;
+    }
+    .lightbox.active { display: flex; }
+    .lightbox-content {
+      background: var(--cream); border-radius: 20px; overflow: hidden;
+      max-width: 480px; width: 100%; max-height: 90vh; overflow-y: auto;
+    }
+    .lightbox-img { width: 100%; max-height: 60vh; object-fit: contain; background: var(--ink); display: block; }
+    .lightbox-body { padding: 1.6rem; }
+    .lightbox-body h3 { font-family: 'Playfair Display', serif; font-size: 1.3rem; margin-bottom: 0.3rem; }
+    .lightbox-body p { font-size: 0.85rem; color: var(--muted); margin-bottom: 1.2rem; }
+    .lightbox-close {
+      position: absolute; top: 1.5rem; right: 1.5rem;
+      width: 40px; height: 40px; border-radius: 50%;
+      background: rgba(255,255,255,0.15); color: var(--white);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 1.2rem; border: none; z-index: 5;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1024px) {
+      .gallery-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 768px) {
+      nav { padding: 0.85rem 1.2rem; }
+      .nav-links { display: none; }
+      .page-header { padding: 7rem 1.2rem 2rem; }
+      .cat-tabs { padding: 2rem 1.2rem 1rem; flex-wrap: wrap; }
+      .cat-tab { padding: 0.7rem 1.5rem; font-size: 0.78rem; }
+      .filters { padding: 0 1.2rem 2rem; }
+      .gallery-wrap { padding: 0 1.2rem 4rem; }
+      .gallery-grid { grid-template-columns: repeat(2, 1fr); gap: 0.7rem; }
+      .cta-strip { margin: 0 1.2rem 4rem; padding: 2.5rem 1.5rem; }
+      footer { flex-direction: column; text-align: center; padding: 2rem 1.2rem; }
+      .footer-links { flex-wrap: wrap; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- FLOATING WHATSAPP -->
+<a href="https://wa.me/923174537882?text=Hi%20Bia!%20I%20saw%20your%20gallery%20and%20I%27d%20love%20to%20commission%20a%20painting%20%F0%9F%8E%A8" target="_blank" class="wa-float" aria-label="Chat on WhatsApp">
+  <svg viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+  </svg>
+</a>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-brand">
+    <img src="logo.png" alt="Brusho by Bia Logo" class="nav-logo-img" onerror="this.style.display='none'"/>
+    <span class="nav-wordmark">Brusho <span>by Bia</span></span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html" class="active">Home</a></li>
+    <li><a href="index.html#about">About</a></li>
+    <li><a href="index.html#commission">Commission</a></li>
+    <li>
+      <a href="https://wa.me/923174537882?text=Hi%20Bia!%20I%27d%20love%20to%20order%20a%20custom%20painting%20%F0%9F%8E%A8" target="_blank" class="nav-wa">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        WhatsApp
+      </a>
+    </li>
+  </ul>
+</nav>
+
+<!-- PAGE HEADER -->
+<header class="page-header">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <p class="eyebrow">The Full Collection</p>
+  <h1>Every piece tells <em>a story</em></h1>
+  <p>Browse original canvas paintings and one-of-a-kind painted objects. Each one was made with a real person's vision in mind — yours could be next.</p>
+</header>
+
+<!-- CATEGORY TABS -->
+<div class="cat-tabs">
+  <button class="cat-tab active" data-cat="canvas">🖼️ Canvases</button>
+  <button class="cat-tab" data-cat="random">✨ Random Art</button>
+</div>
+
+<!-- SUB FILTERS -->
+<div class="filters" id="subFilters"></div>
+
+<!-- GALLERY GRID -->
+<div class="gallery-wrap">
+  <div class="gallery-grid" id="galleryGrid"></div>
+</div>
+
+<!-- CTA STRIP -->
+<section class="cta-strip">
+  <h2>Want a piece made <em>just for you?</em></h2>
+  <p>Send a reference image and I'll bring your vision to life — on canvas or anything else.</p>
+  <div class="cta-btns">
+    <a href="brusho-bybia.html#commission" class="btn-pill btn-fill">🎨 Commission Yours</a>
+    <a href="https://wa.me/923174537882?text=Hi%20Bia!%20I%27d%20love%20to%20commission%20a%20painting%20%F0%9F%8E%A8" target="_blank" class="btn-pill btn-outline">💬 Chat on WhatsApp</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Brusho <span>by Bia</span></div>
+  <div class="footer-links">
+    <a href="index.html">Home</a>
+    <a href="index.html#about">About</a>
+    <a href="index.html#commission">Commission</a>
+    <a href="https://www.instagram.com/brusho.bybia/" target="_blank">Instagram</a>
+  </div>
+  <div class="footer-copy">© 2025 Brusho by Bia. All rights reserved.</div>
+</footer>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <div class="lightbox-content">
+    <img class="lightbox-img" id="lb-img" src="" alt=""/>
+    <div class="lightbox-body">
+      <h3 id="lb-title">Painting Title</h3>
+      <p id="lb-meta">Acrylic on canvas</p>
+      <a href="https://wa.me/923174537882?text=Hi%20Bia!%20I%27m%20interested%20in%20one%20of%20your%20paintings%20%F0%9F%8E%A8" target="_blank" class="btn-pill btn-fill" style="width:100%; justify-content:center;">Ask About This Piece</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── DATA: organized by category and sub-type ──
+  const works = {
+    canvas: [
+      { img: "horses.webp", title: "Sunset Companions", sub: "Acrylic on canvas · Animals", tag: "Animals" },
+      { img: "fish.webp", title: "Koi Pond", sub: "Acrylic on canvas · Nature", tag: "Animals" },
+      { img: "lion king.webp", title: "Circle of Life", sub: "Acrylic on canvas · Custom Order", tag: "Animals" },
+      { img: "tom.webp", title: "Tom in the Studio", sub: "Acrylic on canvas · Custom Order", tag: "Custom" },
+      { img: "ramadan.webp", title: "Ramadan Kareem", sub: "Acrylic on canvas · Islamic Art", tag: "Islamic" },
+      { img: "coffee.webp", title: "Morning Brew", sub: "Textured acrylic on canvas · Still Life", tag: "Sculpture" },
+      { img: "sl2.webp", title: "Golden Pitcher", sub: "Oil-style acrylic on canvas · Still Life", tag: "Still Life" },
+      { img: "sl1.webp", title: "Vase & Apple", sub: "Acrylic on canvas · Still Life", tag: "Still Life" },
+      { img: "swan.png", title: "Swan Lake", sub: "Acrylic on canvas · Nature", tag: "Animals" },
+      { img: "snake.webp", title: "Emerald Serpent", sub: "Hand-painted sculpture on canvas", tag: "Sculpture" },
+      { img: "hello kity.webp", title: "Hello Kitty Mini", sub: "Mini canvas", tag: "Mini Canvas" },
+       { img: "mirr.webp", title: "Always Dreaming Mirror", sub: "Hand-painted mirror on canvas", tag: "Custom" },
+       { img: "girls.webp", title: "Best Friends Portrait", sub: "Custom group portrait", tag: "Custom" },
+    ],
+    random: [
+      { img: "cd.webp", title: "Anime Eye Study", sub: "Painted CD art", tag: "CD Art" },
+      { img: "cd2.webp", title: "Captain's Shield", sub: "Painted CD art", tag: "CD Art" },
+      { img: "cd3.webp", title: "Pika Pika Pikachu", sub: "Painted CD art", tag: "CD Art" },
+      { img: "can.webp", title: "Can Art", sub: "Acrylic on canvas · Still Life", tag: "Random" },
+      { img: "mobile cover.webp", title: "Starlit Peaks", sub: "Hand-painted phone case", tag: "Random" },
+      { img: "honey pot.webp", title: "Honey Pot Holder", sub: "Hand-painted pot", tag: "Home Decor" },
+      { img: "bp2.webp", title: "Ballpoint Portrait", sub: "Pen sketch · Custom Order", tag: "Sketch" },
+      { img: "bp.webp", title: "Ballpoint Portrait", sub: "Pen sketch · Custom Order", tag: "Sketch" },
+      { img: "bp3.webp", title: "Ballpoint Portrait", sub: "Pen sketch · Custom Order", tag: "Sketch" },
+    ]
+  };
+
+  let currentCat = "canvas";
+  let currentSub = "All";
+
+  function getSubcats(cat) {
+    const subs = new Set(["All"]);
+    works[cat].forEach(w => subs.add(w.tag));
+    return Array.from(subs);
+  }
+
+  function renderFilters() {
+    const wrap = document.getElementById('subFilters');
+    wrap.innerHTML = '';
+    getSubcats(currentCat).forEach(sub => {
+      const btn = document.createElement('button');
+      btn.className = 'filter-btn' + (sub === currentSub ? ' active' : '');
+      btn.textContent = sub;
+      btn.onclick = () => { currentSub = sub; renderFilters(); renderGrid(); };
+      wrap.appendChild(btn);
+    });
+  }
+
+  function renderGrid() {
+    const grid = document.getElementById('galleryGrid');
+    grid.innerHTML = '';
+    const items = works[currentCat].filter(w => currentSub === "All" || w.tag === currentSub);
+    items.forEach((item, i) => {
+      const el = document.createElement('div');
+      el.className = 'g-item fade-in';
+      el.style.animationDelay = (i * 0.04) + 's';
+      el.onclick = () => openLightbox(item.img, item.title, item.sub);
+      el.innerHTML = `
+        <span class="g-tag">${item.tag}</span>
+        <img src="${item.img}" alt="${item.title}" loading="lazy"/>
+        <div class="g-overlay">
+          <h4>${item.title}</h4>
+          <p>${item.sub}</p>
+        </div>
+      `;
+      grid.appendChild(el);
+    });
+  }
+
+  document.querySelectorAll('.cat-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      currentCat = tab.dataset.cat;
+      currentSub = "All";
+      renderFilters();
+      renderGrid();
+    });
+  });
+
+  function openLightbox(img, title, meta) {
+    document.getElementById('lb-img').src = img;
+    document.getElementById('lb-title').textContent = title;
+    document.getElementById('lb-meta').textContent = meta;
+    document.getElementById('lightbox').classList.add('active');
+  }
+  function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('active');
+  }
+  document.getElementById('lightbox').addEventListener('click', (e) => {
+    if (e.target.id === 'lightbox') closeLightbox();
+  });
+
+  // init
+  renderFilters();
+  renderGrid();
+</script>
+
+</body>
+</html>
